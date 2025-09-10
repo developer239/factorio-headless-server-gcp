@@ -1,1 +1,28 @@
+# IDE
 /.idea
+*.iml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Allow terraform.tfvars to be committed (no secrets)
+ *.tfvars
+
+# Sensitive files
+gcp-key.json
+*.pem
+*.key
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+*.backup
+*.bak

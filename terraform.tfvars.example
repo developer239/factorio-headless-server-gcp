@@ -1,0 +1,7 @@
+project_id = "aaaaaa-bbbbbb-11111-a1"
+
+machine_type = "e2-small"
+
+server_name = "Gauldoth's Factorio Server"
+
+admin_users = ["Gauldoth"]
