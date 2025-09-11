@@ -1,7 +1,7 @@
 # Factorio Headless Server on GCP with Terraform
 
 Deploy Factorio headless server on Google Cloud Platform using Terraform. Designed for small gaming groups with simple
-start/stop controls.
+start/stop controls and minimal player management.
 
 ## Setup
 

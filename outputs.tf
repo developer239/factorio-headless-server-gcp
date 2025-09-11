@@ -18,11 +18,6 @@ output "zone" {
   description = "Zone where the server is deployed"
 }
 
-output "ssh_command" {
-  value       = "gcloud compute ssh ${google_compute_instance.factorio_server.name} --zone=${var.zone}"
-  description = "SSH command to connect to the server"
-}
-
 output "management_service_account_email" {
   value       = google_service_account.factorio_management_sa.email
   description = "Email of the management service account for creating keys"
