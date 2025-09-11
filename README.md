@@ -62,6 +62,16 @@ Then you need to wait a couple of minutes for the Factorio server to start.
 
 ## Server Control
 
+If you want to log in using JSON key file instead of application default credentials:
+
+- Ask GCP project owner for a service account key:
+```bash
+gcloud iam service-accounts keys create ./factorio-management-key.json \
+  --iam-account=factorio-management-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com 
+```
+- Log in: `gcloud auth activate-service-account --key-file=factorio-management-key.json`
+- Set project: `gcloud config set project YOUR_PROJECT_ID`
+
 ### Start Server
 
 ```bash
