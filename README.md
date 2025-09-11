@@ -80,20 +80,36 @@ gcloud config set project YOUR_PROJECT_ID
 
 ### Save File Management
 
+**List save files:**
 ```bash
-# Download save
-gcloud compute scp factorio-server:/opt/factorio/saves/terraform-world.zip ./backup.zip --zone=europe-west4-a
+gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap --command="ls /opt/factorio/saves/"
+```
 
-# Upload save
-gcloud compute scp ./my-save.zip factorio-server:/opt/factorio/saves/ --zone=europe-west4-a
+**Download save file:**
+```bash
+gcloud compute scp factorio-server:/opt/factorio/saves/terraform-world.zip ./backup.zip --zone=europe-west4-a --tunnel-through-iap
+```
 
-# List saves
-gcloud compute ssh factorio-server --zone=europe-west4-a --command="ls /opt/factorio/saves/"
+**Upload save file:**
+
+Upload save file to server:
+```bash
+gcloud compute scp ./terraform-world.zip factorio-server:~/ --zone=europe-west4-a --tunnel-through-iap
+```
+
+SSH and decompress to saves folder:
+```bash
+gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap --command="
+sudo docker stop factorio && \
+sudo mv ~/terraform-world.zip /opt/factorio/saves/ && \
+sudo chown 845:845 /opt/factorio/saves/terraform-world.zip && \
+sudo mv /opt/factorio/saves/terraform-world.zip /opt/factorio/saves/terraform-world.zip && \
+sudo docker start factorio
+"
 ```
 
 ## Troubleshooting
 
-- `gcloud compute ssh factorio-server --zone=europe-west4-a` ssh into the server
 - `gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap` ssh using IAP
 - `sudo systemctl status docker` check Docker status
 - `sudo docker logs factorio` view Factorio container logs

@@ -9,7 +9,7 @@
 .terraform.lock.hcl
 
 # Allow terraform.tfvars to be committed (no secrets)
- *.tfvars
+terraform.tfvars
 
 # Sensitive files
 gcp-key.json
@@ -24,7 +24,7 @@ gcp-key.json
 Thumbs.db
 
 # Backups
-*.backup
+*.zip
 *.bak
 
 factorio-management-key.json
