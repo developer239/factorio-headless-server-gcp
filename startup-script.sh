@@ -80,8 +80,8 @@ fi
 
 echo "Starting Factorio Docker container..."
 
-# Pull latest stable Factorio image
-docker pull factoriotools/factorio:stable
+# Pull Factorio image with specified version
+docker pull factoriotools/factorio:${factorio_version}
 
 # Run Factorio container
 docker run -d \
@@ -92,7 +92,7 @@ docker run -d \
   --restart=unless-stopped \
   -e GENERATE_NEW_SAVE=true \
   -e SAVE_NAME=terraform-world \
-  factoriotools/factorio:stable
+  factoriotools/factorio:${factorio_version}
 
 # Wait for container to start
 sleep 10

@@ -55,3 +55,8 @@ variable "admin_users" {
     error_message = "Admin usernames must contain only letters, numbers, underscores, and hyphens."
   }
 }
+
+variable "factorio_version" {
+  description = "Factorio server version (e.g., '2.0.55', 'stable', 'latest')"
+  type        = string
+}

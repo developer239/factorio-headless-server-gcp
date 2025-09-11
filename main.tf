@@ -131,6 +131,7 @@ resource "google_compute_instance" "factorio_server" {
       max_players        = var.max_players
       game_password      = var.game_password
       admin_users        = var.admin_users
+      factorio_version   = var.factorio_version
     })
   }
 

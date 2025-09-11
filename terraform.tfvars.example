@@ -5,3 +5,5 @@ machine_type = "e2-small"
 server_name = "Factorio Server"
 
 admin_users = ["Nig", "Eliasko", "test1234567899999"]
+
+factorio_version = "2.0.55"
