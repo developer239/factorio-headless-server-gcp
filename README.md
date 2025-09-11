@@ -7,29 +7,41 @@ start/stop controls.
 
 ### 1. Authentication
 
+Login to GCP and set up your environment:
+
 ```bash
 gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
-gcloud services enable compute.googleapis.com
 ```
+
+Set your project:
+
+```bash
+gcloud config set project YOUR_PROJECT_ID
+```
+
+Authenticate application default credentials so that Terraform can use them:
 
 ```bash
 gcloud auth application-default login
 ```
+
+Enable required APIs:
 
 ```bash
 gcloud services enable compute.googleapis.com
 gcloud services enable iam.googleapis.com
 ```
 
+You might want to connect the project to your billing account.
+
 ### 2. Configuration
 
 ```bash
-git clone <your-repo>
+git clone https://github.com/developer239/factorio-headless-server-gcp.git
 cd factorio-headless-server-gcp
 ```
 
-Update configuration in: `terraform.tfvars`
+Create and configure: `terraform.tfvars`
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars
@@ -37,13 +49,16 @@ cp terraform.tfvars.example terraform.tfvars
 
 ### 3. Deploy
 
+Note that the terraform state file will be created in the current directory and is not configured for remote storage.
+
 ```bash
 terraform init
-terraform plan
 terraform apply
 ```
 
-Deployment takes 3-5 minutes.
+Deployment takes a couple of minutes.
+
+Then you need to wait a couple of minutes for the Factorio server to start.
 
 ## Server Control
 
@@ -78,7 +93,6 @@ Players connect using the IP address shown by the start script:
 1. Open Factorio
 2. Multiplayer -> Connect to Address
 3. Enter: `[SERVER_IP]:34197`
-4. Enter password (if configured)
 
 ## Management Tasks
 
@@ -121,4 +135,32 @@ factorio-headless-server-gcp/
     ├── start-server.sh     # Start server
     ├── stop-server.sh      # Stop server
     └── server-status.sh    # Server status
+```
+
+## Troubleshooting
+
+How to SSH into the server:
+
+```bash
+gcloud compute ssh factorio-server --zone=europe-west4-a
+```
+
+or:
+
+```bash
+gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap
+```
+
+### Once you are on the server
+
+Check Docker status:
+
+```bash
+sudo systemctl status docker
+```
+
+Check Factorio container logs:
+
+```bash
+sudo docker logs factorio
 ```
