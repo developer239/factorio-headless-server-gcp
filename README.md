@@ -36,12 +36,7 @@ You might want to connect the project to your billing account.
 
 ### 2. Configuration
 
-```bash
-git clone https://github.com/developer239/factorio-headless-server-gcp.git
-cd factorio-headless-server-gcp
-```
-
-Create and configure: `terraform.tfvars`
+Create and configure: `terraform.tfvars` you only need to update _project_id_ to run the server.
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars
@@ -62,62 +57,26 @@ Then you need to wait a couple of minutes for the Factorio server to start.
 
 ## Server Control
 
-If you want to log in using JSON key file instead of application default credentials:
+If you want to pass management commands using a service account key instead of application default credentials, create a
+json key for the service account created by Terraform:
 
-- Ask GCP project owner for a service account key:
 ```bash
 gcloud iam service-accounts keys create ./factorio-management-key.json \
   --iam-account=factorio-management-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com 
 ```
-- Log in: `gcloud auth activate-service-account --key-file=factorio-management-key.json`
-- Set project: `gcloud config set project YOUR_PROJECT_ID`
 
-### Start Server
+The management key can be used on any machine with gcloud installed:
 
 ```bash
-./scripts/start-server.sh
+gcloud auth activate-service-account --key-file=factorio-management-key.json
+gcloud config set project YOUR_PROJECT_ID
 ```
 
-**Output shows connection IP for players**
+**Commands:**
 
-### Stop Server
-
-```bash
-./scripts/stop-server.sh
-```
-
-**Saves game and stops billing**
-
-### Check Status
-
-```bash
-./scripts/server-status.sh
-```
-
-**Shows server status, logs, and connection info**
-
-## Player Connection
-
-Players connect using the IP address shown by the start script:
-
-1. Open Factorio
-2. Multiplayer -> Connect to Address
-3. Enter: `[SERVER_IP]:34197`
-
-## Management Tasks
-
-### Access Server
-
-```bash
-# SSH to server
-terraform output ssh_command
-
-# View container logs
-gcloud compute ssh factorio-server --zone=europe-west4-a --command="docker logs factorio"
-
-# Resource usage
-gcloud compute ssh factorio-server --zone=europe-west4-a --command="docker stats factorio"
-```
+- `./scripts/start-server.sh` - Start the Factorio server
+- `./scripts/stop-server.sh` - Stop the Factorio server
+- `./scripts/server-status.sh` - Check server status
 
 ### Save File Management
 
@@ -132,45 +91,9 @@ gcloud compute scp ./my-save.zip factorio-server:/opt/factorio/saves/ --zone=eur
 gcloud compute ssh factorio-server --zone=europe-west4-a --command="ls /opt/factorio/saves/"
 ```
 
-## File Structure
-
-```
-factorio-headless-server-gcp/
-├── main.tf                 # GCP infrastructure
-├── variables.tf            # Configuration variables
-├── outputs.tf              # Server connection info
-├── terraform.tfvars        # Your configuration
-├── startup-script.sh       # Server setup script
-└── scripts/
-    ├── start-server.sh     # Start server
-    ├── stop-server.sh      # Stop server
-    └── server-status.sh    # Server status
-```
-
 ## Troubleshooting
 
-How to SSH into the server:
-
-```bash
-gcloud compute ssh factorio-server --zone=europe-west4-a
-```
-
-or:
-
-```bash
-gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap
-```
-
-### Once you are on the server
-
-Check Docker status:
-
-```bash
-sudo systemctl status docker
-```
-
-Check Factorio container logs:
-
-```bash
-sudo docker logs factorio
-```
+- `gcloud compute ssh factorio-server --zone=europe-west4-a` ssh into the server
+- `gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap` ssh using IAP
+- `sudo systemctl status docker` check Docker status
+- `sudo docker logs factorio` view Factorio container logs
