@@ -4,4 +4,4 @@ machine_type = "e2-small"
 
 server_name = "Factorio Server"
 
-admin_users = ["Nig", "Eliasko"]
+admin_users = ["Nig", "Eliasko", "test1234567899999"]

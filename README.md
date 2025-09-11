@@ -113,3 +113,4 @@ sudo docker start factorio
 - `gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap` ssh using IAP
 - `sudo systemctl status docker` check Docker status
 - `sudo docker logs factorio` view Factorio container logs
+- `cat /opt/factorio/config/server-adminlist.json` view Factorio admin list

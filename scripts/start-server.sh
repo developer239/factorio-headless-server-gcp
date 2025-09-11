@@ -36,7 +36,7 @@ echo -e "${BLUE}Starting instance...${NC}"
 gcloud compute instances start $INSTANCE_NAME --zone=$ZONE
 
 echo -e "${BLUE}Waiting for server to be ready...${NC}"
-sleep 30
+sleep 60
 
 # Get the IP address
 IP=$(gcloud compute addresses describe factorio-server-ip --region=europe-west4 --format="value(address)")
