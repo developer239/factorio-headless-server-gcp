@@ -3,7 +3,7 @@
 Prerequisites:
 
 - Clone the repository
-- [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated
+- [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed
 
 1. Paste the service account key JSON file created during Terraform deployment into the repository root and name it
    `factorio-management-key.json`.
