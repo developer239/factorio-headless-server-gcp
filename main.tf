@@ -10,6 +10,34 @@ resource "google_service_account" "factorio_sa" {
   display_name = "Factorio Server Service Account"
 }
 
+# Custom role with minimal permissions for server management
+resource "google_project_iam_custom_role" "factorio_operator" {
+  role_id     = "factorioServerOperator"
+  title       = "Factorio Server Operator"
+  description = "Minimal permissions to start/stop Factorio server"
+  permissions = [
+    "compute.instances.get",
+    "compute.instances.start",
+    "compute.instances.stop",
+    "compute.instances.list",
+    "compute.zones.get",
+    "compute.zones.list"
+  ]
+}
+
+# Service account for server management (start/stop scripts)
+resource "google_service_account" "factorio_management_sa" {
+  account_id   = "factorio-management-sa"
+  display_name = "Factorio Server Management Service Account"
+}
+
+# Grant custom role instead of broad instanceAdmin role
+resource "google_project_iam_member" "factorio_management_custom" {
+  project = var.project_id
+  role    = google_project_iam_custom_role.factorio_operator.id
+  member  = "serviceAccount:${google_service_account.factorio_management_sa.email}"
+}
+
 # Static IP for consistent server address
 resource "google_compute_address" "factorio_ip" {
   name         = "factorio-server-ip"
