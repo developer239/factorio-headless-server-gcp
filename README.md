@@ -102,8 +102,6 @@ SSH and decompress to saves folder:
 gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap --command="
 sudo docker stop factorio && \
 sudo mv ~/terraform-world.zip /opt/factorio/saves/ && \
-sudo chown 845:845 /opt/factorio/saves/terraform-world.zip && \
-sudo mv /opt/factorio/saves/terraform-world.zip /opt/factorio/saves/terraform-world.zip && \
 sudo docker start factorio
 "
 ```
