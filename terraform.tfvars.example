@@ -2,6 +2,6 @@ project_id = "aaaaaa-bbbbbb-11111-a1"
 
 machine_type = "e2-small"
 
-server_name = "Gauldoth's Factorio Server"
+server_name = "Factorio Server"
 
-admin_users = ["Gauldoth"]
+admin_users = ["Nig", "Eliasko"]
