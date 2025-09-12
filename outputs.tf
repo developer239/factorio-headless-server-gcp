@@ -8,6 +8,11 @@ output "connection_string" {
   description = "Direct connection string for players"
 }
 
+output "http_api_url" {
+  value       = "http://${google_compute_address.factorio_ip.address}:8080"
+  description = "HTTP API endpoint for server management"
+}
+
 output "instance_name" {
   value       = google_compute_instance.factorio_server.name
   description = "Name of the Factorio server instance"

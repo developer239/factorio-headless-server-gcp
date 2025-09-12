@@ -1,7 +1,7 @@
 # Factorio Headless Server on GCP with Terraform
 
-Deploy Factorio headless server on Google Cloud Platform using Terraform. Designed for small gaming groups with simple
-start/stop controls and minimal player management.
+Deploy Factorio headless server on Google Cloud Platform using Terraform with HTTP API controls. Designed for small
+gaming groups with remote server management via HTTP endpoints.
 
 ## Setup
 
@@ -55,6 +55,21 @@ Deployment takes a couple of minutes.
 
 Then you need to wait a couple of minutes for the Factorio server to start.
 
+### 4. Get Server Information
+
+After deployment, get connection details:
+
+```bash
+# Get server IP for Factorio game connections
+terraform output connection_string
+
+# Get HTTP API URL for management
+terraform output http_api_url
+
+# Get server IP only
+terraform output server_ip
+```
+
 ## Server Control
 
 If you want to pass management commands using a service account key instead of application default credentials, create a
@@ -76,34 +91,71 @@ gcloud config set project YOUR_PROJECT_ID
 
 - `./scripts/start-server.sh` - Start the Factorio server
 - `./scripts/stop-server.sh` - Stop the Factorio server
-- `./scripts/server-status.sh` - Check server status
+
+## Server Management via HTTP API
+
+Once deployed, the server exposes an HTTP API on port 8080 for remote management. Get the API URL from terraform
+outputs:
+
+```bash
+terraform output http_api_url
+```
+
+### Game Controls
+
+**Check Server Status:**
+
+```bash
+curl http://YOUR_SERVER_IP:8080/factorio/status
+```
+
+**Pause/Unpause Game:**
+
+```bash
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/pause
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/unpause
+```
+
+**Control Game Speed:**
+
+```bash
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/speed/slow
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/speed/normal
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/speed/fast
+```
 
 ### Save File Management
 
-**List save files:**
+**List Save Files:**
+
 ```bash
-gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap --command="ls /opt/factorio/saves/"
+curl http://YOUR_SERVER_IP:8080/factorio/saves
 ```
 
-**Download save file:**
+**Load Existing Save:**
+
 ```bash
-gcloud compute scp factorio-server:/opt/factorio/saves/terraform-world.zip ./backup.zip --zone=europe-west4-a --tunnel-through-iap
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/load/SAVE_NAME
 ```
 
-**Upload save file:**
+**Upload and Load Save File:**
 
-Upload save file to server:
 ```bash
-gcloud compute scp ./terraform-world.zip factorio-server:~/ --zone=europe-west4-a --tunnel-through-iap
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/upload-save \
+  -F "saveFile=@/path/to/your/save.zip" \
+  -F "autoLoad=true"
 ```
 
-SSH and decompress to saves folder:
+**Trigger Manual Save:**
+
 ```bash
-gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap --command="
-sudo docker stop factorio && \
-sudo mv ~/terraform-world.zip /opt/factorio/saves/ && \
-sudo docker start factorio
-"
+curl -X POST http://YOUR_SERVER_IP:8080/factorio/save
+```
+
+**Get Server Time:**
+
+```bash
+curl http://YOUR_SERVER_IP:8080/factorio/time
 ```
 
 ## Troubleshooting
@@ -111,4 +163,4 @@ sudo docker start factorio
 - `gcloud compute ssh factorio-server --zone=europe-west4-a --tunnel-through-iap` ssh using IAP
 - `sudo systemctl status docker` check Docker status
 - `sudo docker logs factorio` view Factorio container logs
-- `cat /opt/factorio/config/server-adminlist.json` view Factorio admin list
+- `cat /factorio/config/server-adminlist.json` view Factorio admin list

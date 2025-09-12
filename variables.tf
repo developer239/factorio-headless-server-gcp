@@ -37,13 +37,6 @@ variable "max_players" {
   default     = 6
 }
 
-variable "game_password" {
-  description = "Password for the Factorio server (leave empty for no password)"
-  type        = string
-  default     = ""
-  sensitive   = true
-}
-
 variable "admin_users" {
   description = "List of Factorio usernames who should have admin privileges"
   type = list(string)
@@ -54,9 +47,4 @@ variable "admin_users" {
     ])
     error_message = "Admin usernames must contain only letters, numbers, underscores, and hyphens."
   }
-}
-
-variable "factorio_version" {
-  description = "Factorio server version (e.g., '2.0.55', 'stable', 'latest')"
-  type        = string
 }

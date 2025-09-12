@@ -24,39 +24,12 @@ fi
 
 # Create Factorio directory with correct permissions (idempotent)
 echo "Setting up Factorio directories..."
-mkdir -p /opt/factorio/{saves,mods,config,backups}
-chown -R 845:845 /opt/factorio  # Factorio container UID
+mkdir -p /factorio/{saves,mods,config,backups}
+chown -R 845:845 /factorio  # Factorio container UID
 echo "Factorio directories ready"
 
-# Create server configuration (always update to match current variables)
-echo "Creating server configuration..."
-cat > /opt/factorio/config/server-settings.json << 'EOF'
-{
-  "name": "${server_name}",
-  "description": "${server_description}",
-  "tags": ["gcp", "terraform"],
-  "max_players": ${max_players},
-  "visibility": {
-    "public": false,
-    "lan": false
-  },%{if game_password != ""}
-  "game_password": "${game_password}",%{endif}
-  "require_user_verification": false,
-  "auto_pause": true,
-  "autosave_interval": 10,
-  "autosave_slots": 5,
-  "only_admins_can_pause_the_game": true,
-  "afk_autokick_interval": 30
-}
-EOF
-
-# Create admin list with configurable admins (always update to match current variables)
-echo "Setting admin users: ${jsonencode(admin_users)}"
-cat > /opt/factorio/config/server-adminlist.json << 'EOF'
-${jsonencode(admin_users)}
-EOF
-
-echo "Configuration files updated"
+# No need for manual configuration - wrapped image handles it via environment variables
+echo "Configuration will be handled by wrapped image via environment variables"
 
 echo "Managing existing Factorio container..."
 
@@ -78,21 +51,25 @@ else
     echo "No existing container found"
 fi
 
-echo "Starting Factorio Docker container..."
+echo "Starting Factorio Docker container with HTTP controls..."
 
-# Pull Factorio image with specified version
-docker pull factoriotools/factorio:${factorio_version}
+# Pull Factorio image with HTTP controls
+docker pull jarnotmichal/factorio-with-http-controls:2.0.55
 
-# Run Factorio container
+# Run Factorio container with HTTP API
 docker run -d \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
-  -v /opt/factorio:/factorio \
+  -p 8080:8080/tcp \
+  -v /factorio:/factorio \
   --name factorio \
   --restart=unless-stopped \
-  -e GENERATE_NEW_SAVE=true \
-  -e SAVE_NAME=terraform-world \
-  factoriotools/factorio:${factorio_version}
+  -e FACTORIO_SERVER_NAME="${server_name}" \
+  -e FACTORIO_SERVER_DESCRIPTION="${server_description}" \
+  -e FACTORIO_MAX_PLAYERS=${max_players} \
+  -e FACTORIO_ADMIN_USERS='${jsonencode(admin_users)}' \
+  -e FACTORIO_SAVE_NAME=default \
+  jarnotmichal/factorio-with-http-controls:2.0.55
 
 # Wait for container to start
 sleep 10
@@ -110,16 +87,16 @@ fi
 
 # Set up automatic backups every 4 hours (idempotent)
 echo "Setting up automatic backups..."
-mkdir -p /opt/factorio/backups
+mkdir -p /factorio/backups
 
 # Create backup cron job (overwrite existing) - daily at 2 AM
 cat > /etc/cron.d/factorio-backup << 'EOF'
-0 2 * * * root tar -czf /opt/factorio/backups/backup-$(date +\%Y\%m\%d-\%H\%M\%S).tar.gz /opt/factorio/saves/ 2>/dev/null
+0 2 * * * root tar -czf /factorio/backups/backup-$(date +\%Y\%m\%d-\%H\%M\%S).tar.gz /factorio/saves/ 2>/dev/null
 EOF
 
 # Clean old backups (keep last 7 days)
 cat > /etc/cron.d/factorio-cleanup << 'EOF'
-0 2 * * * root find /opt/factorio/backups -name "backup-*.tar.gz" -mtime +7 -delete 2>/dev/null
+0 2 * * * root find /factorio/backups -name "backup-*.tar.gz" -mtime +7 -delete 2>/dev/null
 EOF
 
 echo "Backup system configured"
@@ -133,16 +110,18 @@ echo "Factorio server setup complete!"
 # Get external IP for connection info
 EXTERNAL_IP=$(curl -s ifconfig.me 2>/dev/null || echo "Unable to determine external IP")
 echo "Server will be available at: $EXTERNAL_IP:34197"
+echo "HTTP API will be available at: http://$EXTERNAL_IP:8080"
 
 echo "Management commands:"
 echo "  Check status: docker logs factorio"
 echo "  Container stats: docker stats factorio --no-stream"
 echo "  Restart container: docker restart factorio"
+echo "  HTTP API status: curl http://$EXTERNAL_IP:8080/factorio/status"
 
 echo "File locations:"
-echo "  Saves: /opt/factorio/saves/"
-echo "  Config: /opt/factorio/config/"
-echo "  Backups: /opt/factorio/backups/"
+echo "  Saves: /factorio/saves/"
+echo "  Config: /factorio/config/"
+echo "  Backups: /factorio/backups/"
 
 echo "Final container status:"
 docker ps | grep factorio || echo "Warning: Factorio container not visible in running processes"

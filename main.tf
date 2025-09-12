@@ -81,6 +81,20 @@ resource "google_compute_firewall" "factorio_game" {
   target_tags   = ["factorio-server"]
 }
 
+# HTTP API access for remote management
+resource "google_compute_firewall" "factorio_http_api" {
+  name    = "allow-factorio-http-api"
+  network = google_compute_network.factorio_vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8080"]  # HTTP API
+  }
+
+  source_ranges = ["0.0.0.0/0"]  # Public access
+  target_tags   = ["factorio-server"]
+}
+
 # SSH access (restricted to Google Cloud IAP)
 resource "google_compute_firewall" "ssh_admin" {
   name    = "allow-ssh-admin"
@@ -129,9 +143,7 @@ resource "google_compute_instance" "factorio_server" {
       server_name        = var.server_name
       server_description = var.server_description
       max_players        = var.max_players
-      game_password      = var.game_password
       admin_users        = var.admin_users
-      factorio_version   = var.factorio_version
     })
   }
 

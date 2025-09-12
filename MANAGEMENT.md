@@ -23,6 +23,47 @@ gcloud config set project private-factorio-server
 
 **Commands:**
 
-- `./scripts/server-status.sh` - Check server status
-- `./scripts/start-server.sh` - Start the Factorio server
+- `./scripts/start-server.sh` - Start the Factorio server  
 - `./scripts/stop-server.sh` - Stop the Factorio server
+
+## HTTP API Management
+
+Once the server is running, you can manage it remotely via HTTP API on port 8080:
+
+### Get Server Information
+```bash
+# Get server IP from terraform
+SERVER_IP=$(cd /path/to/terraform && terraform output -raw server_ip)
+
+# Check server status
+curl http://$SERVER_IP:8080/factorio/status
+
+# Get API URL directly  
+curl http://$SERVER_IP:8080/factorio/time
+```
+
+### Save Management
+```bash
+# List all saves
+curl http://$SERVER_IP:8080/factorio/saves
+
+# Load a specific save
+curl -X POST http://$SERVER_IP:8080/factorio/load/default
+
+# Upload and auto-load save
+curl -X POST http://$SERVER_IP:8080/factorio/upload-save \
+  -F "saveFile=@/path/to/save.zip" \
+  -F "autoLoad=true"
+```
+
+### Game Controls
+```bash
+# Pause/unpause
+curl -X POST http://$SERVER_IP:8080/factorio/pause
+curl -X POST http://$SERVER_IP:8080/factorio/unpause
+
+# Speed controls
+curl -X POST http://$SERVER_IP:8080/factorio/speed/slow
+curl -X POST http://$SERVER_IP:8080/factorio/speed/normal
+curl -X POST http://$SERVER_IP:8080/factorio/speed/fast
+```

@@ -29,6 +29,7 @@ if [ "$STATUS" = "RUNNING" ]; then
     # Get the IP address
     IP=$(gcloud compute addresses describe factorio-server-ip --region=europe-west4 --format="value(address)")
     echo -e "${GREEN}Connect to: $IP:34197${NC}"
+    echo -e "${GREEN}HTTP API: http://$IP:8080${NC}"
     exit 0
 fi
 
@@ -43,5 +44,6 @@ IP=$(gcloud compute addresses describe factorio-server-ip --region=europe-west4 
 
 echo -e "${GREEN}Factorio server is now running!${NC}"
 echo -e "${GREEN}Players can connect to: $IP:34197${NC}"
-echo -e "${BLUE}Check status: ./scripts/server-status.sh${NC}"
+echo -e "${GREEN}HTTP API available at: http://$IP:8080${NC}"
+echo -e "${BLUE}Check server status: curl http://$IP:8080/factorio/status${NC}"
 echo -e "${BLUE}Stop server: ./scripts/stop-server.sh${NC}"
