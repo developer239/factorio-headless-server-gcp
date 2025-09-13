@@ -48,3 +48,25 @@ variable "admin_users" {
     error_message = "Admin usernames must contain only letters, numbers, underscores, and hyphens."
   }
 }
+
+variable "autosave_interval" {
+  description = "Autosave interval in minutes (how often the server automatically saves)"
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.autosave_interval >= 1 && var.autosave_interval <= 60
+    error_message = "Autosave interval must be between 1 and 60 minutes."
+  }
+}
+
+variable "autosave_slots" {
+  description = "Number of autosave slots (server cycles through this many autosave files)"
+  type        = number
+  default     = 5
+
+  validation {
+    condition     = var.autosave_slots >= 1 && var.autosave_slots <= 20
+    error_message = "Autosave slots must be between 1 and 20."
+  }
+}

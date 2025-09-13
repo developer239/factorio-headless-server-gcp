@@ -17,7 +17,7 @@ spec:
         runAsUser: 0  # Run as root to fix permissions
   containers:
     - name: factorio
-      image: jarnotmichal/factorio-with-http-controls:2.0.55-5
+      image: jarnotmichal/factorio-with-http-controls:2.0.55-6
       imagePullPolicy: Always
       ports:
         - containerPort: 34197
@@ -37,6 +37,10 @@ spec:
           value: '${admin_users}'
         - name: FACTORIO_SAVE_NAME
           value: "default"
+        - name: FACTORIO_AUTOSAVE_INTERVAL
+          value: "${autosave_interval}"
+        - name: FACTORIO_AUTOSAVE_SLOTS
+          value: "${autosave_slots}"
         - name: PORT
           value: "8080"
       volumeMounts:

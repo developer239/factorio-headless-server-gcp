@@ -171,6 +171,8 @@ resource "google_compute_instance" "factorio_server" {
       server_description = var.server_description
       max_players        = var.max_players
       admin_users        = jsonencode(var.admin_users)
+      autosave_interval  = var.autosave_interval
+      autosave_slots     = var.autosave_slots
     })
   }
 
