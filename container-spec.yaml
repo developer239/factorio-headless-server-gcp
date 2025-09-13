@@ -1,0 +1,31 @@
+spec:
+  containers:
+    - name: factorio
+      image: jarnotmichal/factorio-with-http-controls:2.0.55
+      ports:
+        - containerPort: 34197
+          protocol: UDP
+        - containerPort: 27015
+          protocol: TCP  
+        - containerPort: 8080
+          protocol: TCP
+      env:
+        - name: FACTORIO_SERVER_NAME
+          value: "${server_name}"
+        - name: FACTORIO_SERVER_DESCRIPTION
+          value: "${server_description}"
+        - name: FACTORIO_MAX_PLAYERS
+          value: "${max_players}"
+        - name: FACTORIO_ADMIN_USERS
+          value: '${admin_users}'
+        - name: FACTORIO_SAVE_NAME
+          value: "default"
+      volumeMounts:
+        - name: factorio-data
+          mountPath: /factorio
+      restartPolicy: Always
+  volumes:
+    - name: factorio-data
+      hostPath:
+        path: /mnt/stateful_partition/factorio
+        type: DirectoryOrCreate

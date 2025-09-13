@@ -118,7 +118,7 @@ resource "google_compute_instance" "factorio_server" {
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+      image = "cos-cloud/cos-stable"
       size  = 20
       type  = "pd-balanced"
     }
@@ -139,12 +139,16 @@ resource "google_compute_instance" "factorio_server" {
   }
 
   metadata = {
-    startup-script = templatefile("${path.module}/startup-script.sh", {
+    gce-container-declaration = templatefile("${path.module}/container-spec.yaml", {
       server_name        = var.server_name
       server_description = var.server_description
       max_players        = var.max_players
-      admin_users        = var.admin_users
+      admin_users        = jsonencode(var.admin_users)
     })
+  }
+
+  labels = {
+    container-vm = "cos-stable"
   }
 
   scheduling {
