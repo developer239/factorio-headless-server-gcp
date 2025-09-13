@@ -1,7 +1,23 @@
 spec:
+  # PERMISSION FIX: Use initContainer to set proper ownership
+  initContainers:
+    - name: fix-permissions
+      image: alpine:latest
+      command: ['sh', '-c']
+      args:
+        - |
+          echo "Fixing permissions for factorio data directory..."
+          chown -R 845:845 /data/factorio
+          chmod -R 755 /data/factorio
+          echo "Permissions fixed successfully"
+      volumeMounts:
+        - name: factorio-data
+          mountPath: /data/factorio
+      securityContext:
+        runAsUser: 0  # Run as root to fix permissions
   containers:
     - name: factorio
-      image: jarnotmichal/factorio-with-http-controls:2.0.55-3
+      image: jarnotmichal/factorio-with-http-controls:2.0.55-4
       imagePullPolicy: Always
       ports:
         - containerPort: 34197
@@ -31,6 +47,8 @@ spec:
         runAsUser: 845
         runAsGroup: 845
         fsGroup: 845
+        # Additional security context to ensure proper permissions
+        fsGroupChangePolicy: "Always"
   volumes:
     - name: factorio-data
       hostPath:
