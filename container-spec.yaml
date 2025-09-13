@@ -1,7 +1,8 @@
 spec:
   containers:
     - name: factorio
-      image: jarnotmichal/factorio-with-http-controls:2.0.55
+      image: jarnotmichal/factorio-with-http-controls:2.0.55-2
+      imagePullPolicy: Always
       ports:
         - containerPort: 34197
           protocol: UDP
@@ -22,7 +23,7 @@ spec:
           value: "default"
       volumeMounts:
         - name: factorio-data
-          mountPath: /factorio
+          mountPath: /data/factorio
       restartPolicy: Always
   volumes:
     - name: factorio-data
