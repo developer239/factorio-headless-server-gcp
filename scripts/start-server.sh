@@ -47,3 +47,18 @@ echo -e "${GREEN}Players can connect to: $IP:34197${NC}"
 echo -e "${GREEN}HTTP API available at: http://$IP:8080${NC}"
 echo -e "${BLUE}Check server status: curl http://$IP:8080/factorio/status${NC}"
 echo -e "${BLUE}Stop server: ./scripts/stop-server.sh${NC}"
+
+# Server controls
+echo -e "${BLUE}Server controls:${NC}"
+
+echo "curl http://$IP:8080/factorio/status"
+echo "curl -X POST http://$IP:8080/factorio/pause"
+echo "curl -X POST http://$IP:8080/factorio/unpause"
+echo "curl -X POST http://$IP:8080/factorio/speed/slow"
+echo "curl -X POST http://$IP:8080/factorio/speed/normal"
+echo "curl -X POST http://$IP:8080/factorio/speed/fast"
+echo "curl http://$IP:8080/factorio/saves"
+echo "curl -X POST http://$IP:8080/factorio/load/SAVE_NAME"
+echo "curl -X POST http://$IP:8080/factorio/upload-save -F \"saveFile=@/path/to/save.zip\" -F \"autoLoad=true\""
+echo "curl -X POST http://$IP:8080/factorio/save"
+echo "curl http://$IP:8080/factorio/time"
