@@ -17,7 +17,7 @@ spec:
         runAsUser: 0  # Run as root to fix permissions
   containers:
     - name: factorio
-      image: jarnotmichal/factorio-with-http-controls:2.0.55-4
+      image: jarnotmichal/factorio-with-http-controls:2.0.55-5
       imagePullPolicy: Always
       ports:
         - containerPort: 34197

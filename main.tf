@@ -138,6 +138,33 @@ resource "google_compute_instance" "factorio_server" {
     scopes = ["cloud-platform"]
   }
 
+  # FIX: Add startup script to handle permissions before containers start
+  metadata_startup_script = <<-EOF
+    #!/bin/bash
+    echo "=== Factorio Server Startup Script ==="
+
+    # Wait for the stateful partition to be available
+    echo "Waiting for stateful partition..."
+    while [ ! -d "/mnt/stateful_partition" ]; do
+      echo "Waiting for /mnt/stateful_partition to be available..."
+      sleep 2
+    done
+
+    # Create and fix permissions for factorio data directory
+    echo "Setting up factorio data directory..."
+    mkdir -p /mnt/stateful_partition/factorio/{saves,config,mods}
+
+    # Set correct ownership for factorio user (UID 845, GID 845)
+    chown -R 845:845 /mnt/stateful_partition/factorio
+    chmod -R 755 /mnt/stateful_partition/factorio
+
+    echo "✅ Factorio data directory permissions set correctly"
+    echo "Directory ownership:"
+    ls -la /mnt/stateful_partition/ | grep factorio
+
+    echo "=== Startup script completed ==="
+  EOF
+
   metadata = {
     gce-container-declaration = templatefile("${path.module}/container-spec.yaml", {
       server_name        = var.server_name
