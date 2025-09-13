@@ -1,7 +1,7 @@
 spec:
   containers:
     - name: factorio
-      image: jarnotmichal/factorio-with-http-controls:2.0.55-2
+      image: jarnotmichal/factorio-with-http-controls:2.0.55-3
       imagePullPolicy: Always
       ports:
         - containerPort: 34197
@@ -21,10 +21,16 @@ spec:
           value: '${admin_users}'
         - name: FACTORIO_SAVE_NAME
           value: "default"
+        - name: PORT
+          value: "8080"
       volumeMounts:
         - name: factorio-data
           mountPath: /data/factorio
       restartPolicy: Always
+      securityContext:
+        runAsUser: 845
+        runAsGroup: 845
+        fsGroup: 845
   volumes:
     - name: factorio-data
       hostPath:

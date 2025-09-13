@@ -164,3 +164,5 @@ curl http://YOUR_SERVER_IP:8080/factorio/time
 - `sudo systemctl status docker` check Docker status
 - `sudo docker logs factorio` view Factorio container logs
 - `cat /factorio/config/server-adminlist.json` view Factorio admin list
+- `sudo docker ps | grep factorio` check container status
+- `sudo docker logs $(sudo docker ps -q | head -1) --tail 50` view recent container logs
