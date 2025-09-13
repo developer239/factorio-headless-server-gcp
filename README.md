@@ -68,6 +68,9 @@ terraform output http_api_url
 
 # Get server IP only
 terraform output server_ip
+
+# API Usage
+terraform output api_usage
 ```
 
 ## Server Control
